@@ -1,22 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/view/dummydb.dart';
-import 'package:todo_app/view/home_screen/tabs/appbar_dropdown_rowcard.dart';
+import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 
 class ListAddingScreen extends StatefulWidget {
-  const ListAddingScreen({super.key, this.dropValue});
+  const ListAddingScreen({super.key, this.dropValue, this.itemIndex = 0});
   final String? dropValue;
-
+  final int itemIndex;
   @override
   State<ListAddingScreen> createState() => _ListAddingScreenState();
 }
 
 class _ListAddingScreenState extends State<ListAddingScreen> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  bool isEdit = false;
+
+  var listBox = Hive.box(AppSessions.ListBox);
+  List listKeys = [];
+
+  @override
+  void initState() {
+    listKeys = listBox.keys.toList();
+    setState(() {});
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: ColorConstants.whiteMain,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            //for editing list adding screen data
+
+            // isEdit
+            //     ? listBox.put(listKeys[widget.itemIndex!], {
+            //         'taskName': nameController.text,
+            //         'dueDate': dateController.text
+            //       })
+            //     :
+            listBox.add({
+              'taskName': nameController.text,
+              'dueDate': dateController.text
+            });
+            listKeys = listBox.keys.toList();
+            setState(() {});
+            Navigator.pop(context);
+          },
+          backgroundColor: ColorConstants.whiteMain,
+          child: Icon(Icons.check),
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -33,7 +70,9 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                     width: 10,
                   ),
                   InkWell(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: Icon(
                       Icons.arrow_back,
                       color: ColorConstants.whiteMain,
@@ -67,6 +106,7 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                   TextField(
+                    controller: nameController,
                     style: TextStyle(color: ColorConstants.blackMain),
                     decoration: InputDecoration(
                         hintText: 'Enter Task Here',
@@ -84,6 +124,8 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         fontWeight: FontWeight.bold),
                   ),
                   TextField(
+                    controller: dateController,
+                    readOnly: true,
                     style: TextStyle(color: ColorConstants.blackMain),
                     decoration: InputDecoration(
                         suffixIcon: InkWell(

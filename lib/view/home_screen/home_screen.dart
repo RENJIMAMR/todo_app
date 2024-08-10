@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/utils/constants/image_constants.dart';
 import 'package:todo_app/view/dummydb.dart';
-import 'package:todo_app/view/home_screen/tabs/appbar_dropdown_rowcard.dart';
+import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
+import 'package:todo_app/view/home_screen/widgets/list_row_card.dart';
 import 'package:todo_app/view/list_adding_screen/list_adding_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,6 +18,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? dropValue;
+  int selectedIndex = 0;
+  var listBox = Hive.box(AppSessions.ListBox);
+  List listKeys = [];
+
+  @override
+  void initState() {
+    listKeys = listBox.keys.toList();
+    setState(() {});
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ListAddingScreen(),
+                  builder: (context) => ListAddingScreen(
+                      // itemIndex: selectedIndex,
+
+                      ),
                 ));
           },
           child: Icon(
@@ -38,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: ColorConstants.whiteMain,
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
@@ -102,6 +119,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                  padding: EdgeInsets.all(20),
+                  itemCount: listKeys.length,
+                  itemBuilder: (context, index) {
+                    var currentList = listBox.get(listKeys[index]);
+                    // Column(
+                    //   crossAxisAlignment: CrossAxisAlignment.start,
+                    //   children: [
+                    //     Text(
+                    //       'ToDay',
+                    //       style: TextStyle(
+                    //           color: ColorConstants.violetApp,
+                    //           fontSize: 20,
+                    //           fontWeight: FontWeight.bold),
+                    // ),
+                    InkWell(
+                        onTap: () {
+                          selectedIndex = index;
+
+                          setState(() {});
+                        },
+                        child: ListRowCard(
+                            taskName: currentList['taskName'],
+                            duedate: currentList['dueDate']));
+                    //   ],
+                    // );
+                  }),
             )
           ],
         ),

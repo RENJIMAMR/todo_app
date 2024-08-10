@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/welcome_page/welcome_page.dart';
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
+  await Hive.initFlutter();
+  var box = await Hive.openBox(AppSessions.ListBox);
   runApp(MyApp());
 }
 
