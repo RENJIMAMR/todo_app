@@ -3,28 +3,29 @@ import 'package:hive/hive.dart';
 import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 
-class ListRowCard extends StatefulWidget {
+class ListRowCard extends StatelessWidget {
   const ListRowCard(
       {super.key,
       required this.taskName,
       this.duedate,
-      this.onDelete,
+      this.height = 80,
+      // this.onDelete,
+      this.onChanged,
+      this.isChecked = false,
       this.time});
   final String taskName;
+  final double height;
   final String? duedate, time;
-  final void Function()? onDelete;
-  @override
-  State<ListRowCard> createState() => _ListRowCardState();
-}
-
-class _ListRowCardState extends State<ListRowCard> {
-  bool checkValue = false;
+  // final void Function()? onDelete;
+  final void Function(bool?)? onChanged;
+  final bool isChecked;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Container(
-          height: 80,
+          // duration: Duration(seconds: 2),
+          height: height,
           decoration: BoxDecoration(
               color: ColorConstants.blueGrey.withOpacity(.5),
               borderRadius: BorderRadius.circular(20)),
@@ -35,22 +36,31 @@ class _ListRowCardState extends State<ListRowCard> {
               children: [
                 Column(
                   children: [
-                    Checkbox(
-                      // checkColor: ColorConstants.violetlight,
-                      fillColor: WidgetStatePropertyAll(checkValue
-                          ? ColorConstants.violetlight.withOpacity(.9)
-                          : ColorConstants.whiteMain),
+                    // Checkbox(
+                    //   // checkColor: ColorConstants.violetlight,
+                    //   fillColor: WidgetStatePropertyAll(checkValue
+                    //       ? ColorConstants.violetlight.withOpacity(.9)
+                    //       : ColorConstants.whiteMain),
 
-                      value: checkValue,
-                      onChanged: (value) {
-                        setState(() {
-                          checkValue = value!;
-                        });
-                        if (checkValue != null && widget.onDelete != null) {
-                          widget.onDelete!();
-                        }
-                      },
-                    ),
+                    //   value: checkValue,
+                    //   onChanged: (value) {
+                    //     setState(() {
+                    //       checkValue = value!;
+                    //     });
+                    //     if (checkValue == true && widget.onDelete != null) {
+                    //       widget.onDelete!();
+                    //     }
+                    //   },
+                    // ),
+// ith njn
+                    Checkbox(
+                        // checkColor: ColorConstants.violetlight,
+                        fillColor: WidgetStatePropertyAll(isChecked
+                            ? ColorConstants.violetlight.withOpacity(.9)
+                            : ColorConstants.whiteMain),
+                        value: isChecked,
+                        onChanged: onChanged),
+
                     SizedBox(
                       height: 12,
                     )
@@ -64,7 +74,7 @@ class _ListRowCardState extends State<ListRowCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.taskName,
+                      taskName,
                       style: TextStyle(
                           color: ColorConstants.violetApp,
                           fontWeight: FontWeight.bold,
@@ -73,7 +83,7 @@ class _ListRowCardState extends State<ListRowCard> {
                     Row(
                       children: [
                         Text(
-                          widget.duedate!,
+                          duedate!,
                           style: TextStyle(
                               color: ColorConstants.violetlight,
                               fontWeight: FontWeight.bold,
@@ -83,7 +93,7 @@ class _ListRowCardState extends State<ListRowCard> {
                           width: 10,
                         ),
                         Text(
-                          widget.time ?? '',
+                          time ?? '',
                           style: TextStyle(
                               color: ColorConstants.violetlight,
                               fontWeight: FontWeight.bold,

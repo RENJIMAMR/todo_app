@@ -8,9 +8,16 @@ import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 
 class ListAddingScreen extends StatefulWidget {
-  const ListAddingScreen({super.key, this.dropValue, this.itemIndex = 0});
+  const ListAddingScreen(
+      {super.key,
+      this.dropValue,
+      this.itemIndex = 0,
+      this.isEdit = false,
+      this.isCompleted = false});
   final String? dropValue;
   final int itemIndex;
+  final bool isEdit;
+  final bool isCompleted;
   @override
   State<ListAddingScreen> createState() => _ListAddingScreenState();
 }
@@ -19,8 +26,6 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
-
-  bool isEdit = false;
 
   var listBox = Hive.box(AppSessions.ListBox);
   List listKeys = [];
@@ -42,16 +47,18 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
           onPressed: () {
             //for editing list adding screen data
 
-            isEdit
-                ? listBox.put(listKeys[widget.itemIndex!], {
+            widget.isEdit == true
+                ? listBox.put(listKeys[widget.itemIndex], {
                     'taskName': nameController.text,
                     'dueDate': dateController.text,
-                    'time': timeController.text
+                    'time': timeController.text,
+                    'isCompleted': widget.isCompleted,
                   })
                 : listBox.add({
                     'taskName': nameController.text,
                     'dueDate': dateController.text,
-                    'time': timeController.text
+                    'time': timeController.text,
+                    'isCompleted': false
                   });
 
             setState(() {});

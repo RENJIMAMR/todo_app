@@ -111,14 +111,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     radius: 20,
                     backgroundImage: AssetImage(ImageConstants.dp1),
                   ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Icon(
-                    Icons.more_vert,
-                    size: 35,
+                  // SizedBox(
+                  //   width: 15,
+                  // ),
+                  PopupMenuButton(
                     color: ColorConstants.whiteMain,
-                  ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(child: Text('Clear')),
+                      PopupMenuItem(child: Text('Share')),
+                      PopupMenuItem(child: Text('Settings')),
+                      PopupMenuItem(child: Text('Print'))
+                    ],
+                  )
+                  // Icon(
+                  //   Icons.more_vert,
+                  //   size: 35,
+                  //   color: ColorConstants.whiteMain,
+                  // ),
                 ],
               ),
             ),
@@ -142,6 +151,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     return InkWell(
                         onTap: () {
                           selectedIndex = index;
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ListAddingScreen(
+                                  isEdit: true,
+                                  isCompleted: currentList["isCompleted"],
+                                  itemIndex: selectedIndex,
+                                ),
+                              ));
 
                           setState(() {});
                         },
@@ -149,21 +167,43 @@ class _HomeScreenState extends State<HomeScreen> {
                           taskName: currentList['taskName'],
                           duedate: currentList['dueDate'],
                           time: currentList['time'],
-                          onDelete: () async {
-                            Future.delayed(Duration(seconds: 2)).then((value) {
-                              listBox.delete(listKeys[index]);
-                              listKeys = listBox.keys.toList();
-                              setState(() {});
+                          // onDelete: () async {
+                          //   Future.delayed(Duration(seconds: 2)).then((value) {
+                          //     listBox.delete(listKeys[index]);
+                          //     listKeys = listBox.keys.toList();
+                          //     setState(() {});
+                          //   });
+                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          //       backgroundColor:
+                          //           ColorConstants.blackMain.withOpacity(.8),
+                          //       content: Text(
+                          //         'Task Completed',
+                          //         style: TextStyle(
+                          //             color: ColorConstants.whiteMain,
+                          //             fontSize: 20),
+                          //       )));
+                          // },
+                          isChecked: currentList["isCompleted"],
+                          height: currentList["isCompleted"] ? 0 : 80,
+                          onChanged: (value) {
+                            listBox.put(listKeys[index], {
+                              'taskName': currentList['taskName'],
+                              'dueDate': currentList['dueDate'],
+                              'time': currentList['time'],
+                              'isCompleted':
+                                  value, // to update the state of checked box
                             });
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                backgroundColor:
-                                    ColorConstants.blackMain.withOpacity(.8),
-                                content: Text(
-                                  'Task Completed',
-                                  style: TextStyle(
-                                      color: ColorConstants.whiteMain,
-                                      fontSize: 20),
-                                )));
+                            listKeys = listBox.keys.toList();
+                            if (value = true) {
+                              Future.delayed(Duration(seconds: 2))
+                                  .then((value) {
+                                listBox.delete(listKeys[index]);
+                                listKeys = listBox.keys.toList();
+                                setState(() {});
+                              });
+                            }
+
+                            setState(() {});
                           },
                         ));
                     //   ],
