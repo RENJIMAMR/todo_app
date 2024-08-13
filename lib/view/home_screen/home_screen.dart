@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hive/hive.dart';
 import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
@@ -26,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     listKeys = listBox.keys.toList();
     setState(() {});
+    print(listKeys);
     super.initState();
   }
 
@@ -44,6 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       ),
                 ));
+            listKeys = listBox.keys.toList();
+            setState(() {});
           },
           child: Icon(
             Icons.add,
@@ -122,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: ListView.builder(
+                  // reverse: true,
                   padding: EdgeInsets.all(20),
                   itemCount: listKeys.length,
                   itemBuilder: (context, index) {
@@ -136,15 +139,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     //           fontSize: 20,
                     //           fontWeight: FontWeight.bold),
                     // ),
-                    InkWell(
+                    return InkWell(
                         onTap: () {
                           selectedIndex = index;
 
                           setState(() {});
                         },
                         child: ListRowCard(
-                            taskName: currentList['taskName'],
-                            duedate: currentList['dueDate']));
+                          taskName: currentList['taskName'],
+                          duedate: currentList['dueDate'],
+                          time: currentList['time'],
+                          onDelete: () async {
+                            Future.delayed(Duration(seconds: 2)).then((value) {
+                              listBox.delete(listKeys[index]);
+                              listKeys = listBox.keys.toList();
+                              setState(() {});
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                backgroundColor:
+                                    ColorConstants.blackMain.withOpacity(.8),
+                                content: Text(
+                                  'Task Completed',
+                                  style: TextStyle(
+                                      color: ColorConstants.whiteMain,
+                                      fontSize: 20),
+                                )));
+                          },
+                        ));
                     //   ],
                     // );
                   }),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/view/dummydb.dart';
+import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 
 class ListAddingScreen extends StatefulWidget {
@@ -16,6 +18,8 @@ class ListAddingScreen extends StatefulWidget {
 class _ListAddingScreenState extends State<ListAddingScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  TextEditingController timeController = TextEditingController();
+
   bool isEdit = false;
 
   var listBox = Hive.box(AppSessions.ListBox);
@@ -25,6 +29,7 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
   void initState() {
     listKeys = listBox.keys.toList();
     setState(() {});
+    print(listKeys);
     super.initState();
   }
 
@@ -37,22 +42,33 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
           onPressed: () {
             //for editing list adding screen data
 
-            // isEdit
-            //     ? listBox.put(listKeys[widget.itemIndex!], {
-            //         'taskName': nameController.text,
-            //         'dueDate': dateController.text
-            //       })
-            //     :
-            listBox.add({
-              'taskName': nameController.text,
-              'dueDate': dateController.text
-            });
-            listKeys = listBox.keys.toList();
+            isEdit
+                ? listBox.put(listKeys[widget.itemIndex!], {
+                    'taskName': nameController.text,
+                    'dueDate': dateController.text,
+                    'time': timeController.text
+                  })
+                : listBox.add({
+                    'taskName': nameController.text,
+                    'dueDate': dateController.text,
+                    'time': timeController.text
+                  });
+
             setState(() {});
-            Navigator.pop(context);
+            //to pass the state of this screen to home screen navigator push
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(),
+                ));
           },
-          backgroundColor: ColorConstants.whiteMain,
-          child: Icon(Icons.check),
+          backgroundColor: ColorConstants.violetlight,
+          child: Icon(
+            Icons.check,
+            color: ColorConstants.whiteMain,
+            weight: 30,
+            size: 40,
+          ),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,17 +139,34 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
+
+                  SizedBox(
+                    height: 20,
+                  ),
                   TextField(
                     controller: dateController,
                     readOnly: true,
                     style: TextStyle(color: ColorConstants.blackMain),
                     decoration: InputDecoration(
                         suffixIcon: InkWell(
-                          onTap: () {
-                            showDatePicker(
+                          onTap: () async {
+                            var selectDate = await showDatePicker(
+                                initialDatePickerMode: DatePickerMode.day,
                                 context: context,
-                                firstDate: DateTime(2024),
-                                lastDate: DateTime.now());
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2025),
+                                initialDate: DateTime.now());
+
+                            if (selectDate != null) {
+                              dateController.text =
+                                  DateFormat('dd MMMM, y').format(selectDate);
+
+                              // Show time field after selecting the date
+                              setState(() {
+                                timeController.text =
+                                    ''; // Clear the previous time
+                              });
+                            }
                           },
                           child: Icon(
                             Icons.calendar_month_sharp,
@@ -145,6 +178,48 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         hintStyle: TextStyle(
                             color: ColorConstants.greyMain.withOpacity(.9))),
                   ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // TextField for selecting time
+                  if (dateController.text.isNotEmpty)
+                    TextField(
+                      controller: timeController,
+                      readOnly: true,
+                      style: TextStyle(color: ColorConstants.blackMain),
+                      decoration: InputDecoration(
+                        hintText: 'Select Time',
+                        hintStyle: TextStyle(
+                          color: ColorConstants.greyMain.withOpacity(.9),
+                        ),
+                        suffixIcon: InkWell(
+                          onTap: () async {
+                            var selectTime = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            );
+
+                            if (selectTime != null) {
+                              final now = DateTime.now();
+                              final selectedDateTime = DateTime(
+                                now.year,
+                                now.month,
+                                now.day,
+                                selectTime.hour,
+                                selectTime.minute,
+                              );
+                              timeController.text = DateFormat('hh:mm a')
+                                  .format(selectedDateTime);
+                            }
+                          },
+                          child: Icon(
+                            Icons.alarm,
+                            size: 30,
+                            color: ColorConstants.blackMain,
+                          ),
+                        ),
+                      ),
+                    ),
                   SizedBox(
                     height: 50,
                   ),
