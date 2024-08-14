@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/utils/constants/image_constants.dart';
@@ -7,6 +10,7 @@ import 'package:todo_app/view/dummydb.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 import 'package:todo_app/view/home_screen/widgets/list_row_card.dart';
 import 'package:todo_app/view/list_adding_screen/list_adding_screen.dart';
+import 'package:todo_app/view/login_screen/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,8 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? dropValue;
-  int selectedIndex = 0;
+  // int selectedIndex = 0;
   var listBox = Hive.box(AppSessions.ListBox);
   List listKeys = [];
 
@@ -26,9 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
     listKeys = listBox.keys.toList();
     setState(() {});
     print(listKeys);
+
     super.initState();
   }
 
+  late final SharedPreferences prefs;
+
+  @override
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -39,10 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ListAddingScreen(
-                      // itemIndex: selectedIndex,
-
-                      ),
+                  builder: (context) => ListAddingScreen(),
                 ));
             listKeys = listBox.keys.toList();
             setState(() {});
@@ -104,30 +110,46 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                   ),
-                  SizedBox(
-                    width: 40,
-                  ),
+                  Spacer(),
                   CircleAvatar(
                     radius: 20,
                     backgroundImage: AssetImage(ImageConstants.dp1),
                   ),
-                  // SizedBox(
-                  //   width: 15,
-                  // ),
+                  SizedBox(
+                    width: 30,
+                  ),
                   PopupMenuButton(
+                    shadowColor: ColorConstants.violetlight,
+                    iconColor: ColorConstants.whiteMain,
+                    iconSize: 30,
                     color: ColorConstants.whiteMain,
                     itemBuilder: (context) => [
-                      PopupMenuItem(child: Text('Clear')),
-                      PopupMenuItem(child: Text('Share')),
+                      PopupMenuItem(
+                          child: InkWell(
+                              onTap: () {
+                                listBox.clear();
+                                listKeys = listBox.keys.toList();
+                                setState(() {});
+                              },
+                              child: Text('Clear'))),
                       PopupMenuItem(child: Text('Settings')),
-                      PopupMenuItem(child: Text('Print'))
+                      PopupMenuItem(child: Text('Print')),
+                      PopupMenuItem(
+                          child: InkWell(
+                              onTap: () async {
+                                final SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                await prefs.clear();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginScreen(),
+                                    ));
+                                setState(() {});
+                              },
+                              child: Text('Logout'))),
                     ],
                   )
-                  // Icon(
-                  //   Icons.more_vert,
-                  //   size: 35,
-                  //   color: ColorConstants.whiteMain,
-                  // ),
                 ],
               ),
             ),
@@ -138,53 +160,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: listKeys.length,
                   itemBuilder: (context, index) {
                     var currentList = listBox.get(listKeys[index]);
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     Text(
-                    //       'ToDay',
-                    //       style: TextStyle(
-                    //           color: ColorConstants.violetApp,
-                    //           fontSize: 20,
-                    //           fontWeight: FontWeight.bold),
-                    // ),
+
                     return InkWell(
                         onTap: () {
-                          selectedIndex = index;
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ListAddingScreen(
-                                  isEdit: true,
-                                  isCompleted: currentList["isCompleted"],
-                                  itemIndex: selectedIndex,
-                                ),
-                              ));
-
+                          // selectedIndex = index;
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return ListAddingScreen(
+                                isEdit: true,
+                                isCompleted: currentList["isCompleted"],
+                                itemIndex: index);
+                          }));
+                          listKeys = listBox.keys.toList();
                           setState(() {});
                         },
                         child: ListRowCard(
                           taskName: currentList['taskName'],
                           duedate: currentList['dueDate'],
                           time: currentList['time'],
-                          // onDelete: () async {
-                          //   Future.delayed(Duration(seconds: 2)).then((value) {
-                          //     listBox.delete(listKeys[index]);
-                          //     listKeys = listBox.keys.toList();
-                          //     setState(() {});
-                          //   });
-                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //       backgroundColor:
-                          //           ColorConstants.blackMain.withOpacity(.8),
-                          //       content: Text(
-                          //         'Task Completed',
-                          //         style: TextStyle(
-                          //             color: ColorConstants.whiteMain,
-                          //             fontSize: 20),
-                          //       )));
-                          // },
+
                           isChecked: currentList["isCompleted"],
-                          height: currentList["isCompleted"] ? 0 : 80,
+                          // height: currentList["isCompleted"] ? 0 : 80,
                           onChanged: (value) {
                             listBox.put(listKeys[index], {
                               'taskName': currentList['taskName'],
@@ -194,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   value, // to update the state of checked box
                             });
                             listKeys = listBox.keys.toList();
-                            if (value = true) {
+                            if (value == true) {
                               Future.delayed(Duration(seconds: 2))
                                   .then((value) {
                                 listBox.delete(listKeys[index]);

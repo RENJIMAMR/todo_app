@@ -33,6 +33,10 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
   @override
   void initState() {
     listKeys = listBox.keys.toList();
+    // nameController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
+    // dateController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
+    // timeController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
+
     setState(() {});
     print(listKeys);
     super.initState();
@@ -77,195 +81,198 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
             size: 40,
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                width: double.infinity,
-                height: 70,
-                decoration: BoxDecoration(
-                    color: ColorConstants.violetApp,
-                    boxShadow: [
-                      BoxShadow(blurRadius: 3, offset: Offset(1.5, 3))
-                    ]),
-                child: Row(children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back,
-                      color: ColorConstants.whiteMain,
-                      size: 30,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  width: double.infinity,
+                  height: 70,
+                  decoration: BoxDecoration(
+                      color: ColorConstants.violetApp,
+                      boxShadow: [
+                        BoxShadow(blurRadius: 3, offset: Offset(1.5, 3))
+                      ]),
+                  child: Row(children: [
+                    SizedBox(
+                      width: 10,
                     ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    'New Task',
-                    style: TextStyle(
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.arrow_back,
                         color: ColorConstants.whiteMain,
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ])),
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Text(
-                    'What is to be done?',
-                    style: TextStyle(
-                        color: ColorConstants.violetApp,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  TextField(
-                    controller: nameController,
-                    style: TextStyle(color: ColorConstants.blackMain),
-                    decoration: InputDecoration(
-                        hintText: 'Enter Task Here',
-                        hintStyle: TextStyle(
-                            color: ColorConstants.greyMain.withOpacity(.9))),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Due date',
-                    style: TextStyle(
-                        color: ColorConstants.violetApp,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-
-                  SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: dateController,
-                    readOnly: true,
-                    style: TextStyle(color: ColorConstants.blackMain),
-                    decoration: InputDecoration(
-                        suffixIcon: InkWell(
-                          onTap: () async {
-                            var selectDate = await showDatePicker(
-                                initialDatePickerMode: DatePickerMode.day,
-                                context: context,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(2025),
-                                initialDate: DateTime.now());
-
-                            if (selectDate != null) {
-                              dateController.text =
-                                  DateFormat('dd MMMM, y').format(selectDate);
-
-                              // Show time field after selecting the date
-                              setState(() {
-                                timeController.text =
-                                    ''; // Clear the previous time
-                              });
-                            }
-                          },
-                          child: Icon(
-                            Icons.calendar_month_sharp,
-                            size: 30,
-                            color: ColorConstants.blackMain,
-                          ),
-                        ),
-                        hintText: 'Date not set',
-                        hintStyle: TextStyle(
-                            color: ColorConstants.greyMain.withOpacity(.9))),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  // TextField for selecting time
-                  if (dateController.text.isNotEmpty)
-                    TextField(
-                      controller: timeController,
-                      readOnly: true,
-                      style: TextStyle(color: ColorConstants.blackMain),
-                      decoration: InputDecoration(
-                        hintText: 'Select Time',
-                        hintStyle: TextStyle(
-                          color: ColorConstants.greyMain.withOpacity(.9),
-                        ),
-                        suffixIcon: InkWell(
-                          onTap: () async {
-                            var selectTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-
-                            if (selectTime != null) {
-                              final now = DateTime.now();
-                              final selectedDateTime = DateTime(
-                                now.year,
-                                now.month,
-                                now.day,
-                                selectTime.hour,
-                                selectTime.minute,
-                              );
-                              timeController.text = DateFormat('hh:mm a')
-                                  .format(selectedDateTime);
-                            }
-                          },
-                          child: Icon(
-                            Icons.alarm,
-                            size: 30,
-                            color: ColorConstants.blackMain,
-                          ),
-                        ),
+                        size: 30,
                       ),
                     ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Add to List',
-                    style: TextStyle(
-                        color: ColorConstants.whiteMain,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  DropdownButton(
-                    iconEnabledColor: ColorConstants.blackMain,
-                    hint: Text(
-                      'Default',
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      'New Task',
                       style: TextStyle(
-                          color: ColorConstants.blackMain,
+                          color: ColorConstants.whiteMain,
                           fontSize: 23,
                           fontWeight: FontWeight.bold),
                     ),
-                    value: widget.dropValue,
-                    dropdownColor: ColorConstants.violetlight,
-                    items: List.generate(
-                      Dummydb.dropdownData.length,
-                      (index) => DropdownMenuItem(
-                          value: Dummydb.dropdownData[index],
-                          child: AppbarDropdownRowcard(
-                            name: Dummydb.dropdownData[index],
-                          )),
+                  ])),
+              Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 30,
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        widget.dropValue == value! as String?;
-                      });
-                    },
-                  ),
-                ],
+                    Text(
+                      'What is to be done?',
+                      style: TextStyle(
+                          color: ColorConstants.violetApp,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    TextField(
+                      controller: nameController,
+                      style: TextStyle(color: ColorConstants.blackMain),
+                      decoration: InputDecoration(
+                          hintText: 'Enter Task Here',
+                          hintStyle: TextStyle(
+                              color: ColorConstants.greyMain.withOpacity(.9))),
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Text(
+                      'Due date',
+                      style: TextStyle(
+                          color: ColorConstants.violetApp,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold),
+                    ),
+
+                    SizedBox(
+                      height: 20,
+                    ),
+                    TextField(
+                      controller: dateController,
+                      readOnly: true,
+                      style: TextStyle(color: ColorConstants.blackMain),
+                      decoration: InputDecoration(
+                          suffixIcon: InkWell(
+                            onTap: () async {
+                              var selectDate = await showDatePicker(
+                                  initialDatePickerMode: DatePickerMode.day,
+                                  context: context,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2025),
+                                  initialDate: DateTime.now());
+
+                              if (selectDate != null) {
+                                dateController.text =
+                                    DateFormat('dd MMMM, y').format(selectDate);
+
+                                // Show time field after selecting the date
+                                setState(() {
+                                  timeController.text =
+                                      ''; // Clear the previous time
+                                });
+                              }
+                            },
+                            child: Icon(
+                              Icons.calendar_month_sharp,
+                              size: 30,
+                              color: ColorConstants.blackMain,
+                            ),
+                          ),
+                          hintText: 'Date not set',
+                          hintStyle: TextStyle(
+                              color: ColorConstants.greyMain.withOpacity(.9))),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    // TextField for selecting time
+                    if (dateController.text.isNotEmpty)
+                      TextField(
+                        controller: timeController,
+                        readOnly: true,
+                        style: TextStyle(color: ColorConstants.blackMain),
+                        decoration: InputDecoration(
+                          hintText: 'Select Time',
+                          hintStyle: TextStyle(
+                            color: ColorConstants.greyMain.withOpacity(.9),
+                          ),
+                          suffixIcon: InkWell(
+                            onTap: () async {
+                              var selectTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+
+                              if (selectTime != null) {
+                                final now = DateTime.now();
+                                final selectedDateTime = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  selectTime.hour,
+                                  selectTime.minute,
+                                );
+                                timeController.text = DateFormat('hh:mm a')
+                                    .format(selectedDateTime);
+                              }
+                            },
+                            child: Icon(
+                              Icons.alarm,
+                              size: 30,
+                              color: ColorConstants.blackMain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    SizedBox(
+                      height: 50,
+                    ),
+
+                    Text(
+                      'Add to List',
+                      style: TextStyle(
+                          color: ColorConstants.whiteMain,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    DropdownButton(
+                      iconEnabledColor: ColorConstants.blackMain,
+                      hint: Text(
+                        'Default',
+                        style: TextStyle(
+                            color: ColorConstants.blackMain,
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      value: widget.dropValue,
+                      dropdownColor: ColorConstants.violetlight,
+                      items: List.generate(
+                        Dummydb.dropdownData.length,
+                        (index) => DropdownMenuItem(
+                            value: Dummydb.dropdownData[index],
+                            child: AppbarDropdownRowcard(
+                              name: Dummydb.dropdownData[index],
+                            )),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          widget.dropValue == value! as String?;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
