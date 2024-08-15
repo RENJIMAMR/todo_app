@@ -21,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String? dropValue;
+  String? dropValueH;
   // int selectedIndex = 0;
   var listBox = Hive.box(AppSessions.ListBox);
   List listKeys = [];
@@ -94,8 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 23,
                           fontWeight: FontWeight.bold),
                     ),
-                    value: dropValue,
-                    dropdownColor: ColorConstants.violetlight,
+                    value: dropValueH,
+                    dropdownColor: ColorConstants.whiteMain,
                     items: List.generate(
                       Dummydb.dropdownData.length,
                       (index) => DropdownMenuItem(
@@ -106,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        dropValue = value! as String?;
+                        dropValueH = value! as String?;
                       });
                     },
                   ),
@@ -125,29 +125,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: ColorConstants.whiteMain,
                     itemBuilder: (context) => [
                       PopupMenuItem(
-                          child: InkWell(
-                              onTap: () {
-                                listBox.clear();
-                                listKeys = listBox.keys.toList();
-                                setState(() {});
-                              },
-                              child: Text('Clear'))),
+                          onTap: () async {
+                            await listBox.clear();
+                            listKeys = listBox.keys.toList();
+                            setState(() {});
+                          },
+                          child: Text('Clear')),
                       PopupMenuItem(child: Text('Settings')),
                       PopupMenuItem(child: Text('Print')),
                       PopupMenuItem(
-                          child: InkWell(
-                              onTap: () async {
-                                final SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.clear();
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => LoginScreen(),
-                                    ));
-                                setState(() {});
-                              },
-                              child: Text('Logout'))),
+                          onTap: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.clear();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(),
+                                ));
+                            setState(() {});
+                          },
+                          child: Text('Logout'))
                     ],
                   )
                 ],
@@ -167,6 +165,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return ListAddingScreen(
+                                taskname: currentList['taskName'],
+                                dueDate: currentList['dueDate'],
+                                time: currentList['time'],
+                                dropValue: currentList['dropValue'],
                                 isEdit: true,
                                 isCompleted: currentList["isCompleted"],
                                 itemIndex: index);
@@ -178,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           taskName: currentList['taskName'],
                           duedate: currentList['dueDate'],
                           time: currentList['time'],
-
+                          dropValue: currentList['dropValue'],
                           isChecked: currentList["isCompleted"],
                           // height: currentList["isCompleted"] ? 0 : 80,
                           onChanged: (value) {
@@ -186,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'taskName': currentList['taskName'],
                               'dueDate': currentList['dueDate'],
                               'time': currentList['time'],
+                              'dropValue': currentList['dropValue'],
                               'isCompleted':
                                   value, // to update the state of checked box
                             });

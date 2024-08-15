@@ -10,19 +10,25 @@ import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 class ListAddingScreen extends StatefulWidget {
   const ListAddingScreen(
       {super.key,
-      this.dropValue,
       this.itemIndex = 0,
       this.isEdit = false,
-      this.isCompleted = false});
-  final String? dropValue;
+      this.isCompleted = false,
+      this.taskname,
+      this.dueDate,
+      this.time,
+      this.dropValue,
+      this.isRepeat = false});
+
   final int itemIndex;
   final bool isEdit;
-  final bool isCompleted;
+  final bool isCompleted, isRepeat;
+  final String? taskname, dueDate, time, dropValue;
   @override
   State<ListAddingScreen> createState() => _ListAddingScreenState();
 }
 
 class _ListAddingScreenState extends State<ListAddingScreen> {
+  String? dropValue1, dropTime;
   TextEditingController nameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
@@ -33,10 +39,10 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
   @override
   void initState() {
     listKeys = listBox.keys.toList();
-    // nameController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
-    // dateController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
-    // timeController.text = listBox.get(listKeys[widget.itemIndex]) ?? '';
-
+    nameController.text = widget.taskname ?? '';
+    dateController.text = widget.dueDate ?? '';
+    timeController.text = widget.time ?? '';
+    // dropValue1 = widget.dropValue ?? '';
     setState(() {});
     print(listKeys);
     super.initState();
@@ -57,12 +63,14 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                     'dueDate': dateController.text,
                     'time': timeController.text,
                     'isCompleted': widget.isCompleted,
+                    'dropValue': dropValue1
                   })
                 : listBox.add({
                     'taskName': nameController.text,
                     'dueDate': dateController.text,
                     'time': timeController.text,
-                    'isCompleted': false
+                    'isCompleted': false,
+                    'dropValue': dropValue1
                   });
 
             setState(() {});
@@ -239,11 +247,13 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                     Text(
                       'Add to List',
                       style: TextStyle(
-                          color: ColorConstants.whiteMain,
+                          color: ColorConstants.blackMain,
                           fontSize: 22,
                           fontWeight: FontWeight.bold),
                     ),
                     DropdownButton(
+                      style: TextStyle(color: ColorConstants.blackMain),
+                      // focusColor: ColorConstants.blackMain,
                       iconEnabledColor: ColorConstants.blackMain,
                       hint: Text(
                         'Default',
@@ -252,8 +262,9 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                             fontSize: 23,
                             fontWeight: FontWeight.bold),
                       ),
-                      value: widget.dropValue,
-                      dropdownColor: ColorConstants.violetlight,
+                      value: dropValue1,
+
+                      dropdownColor: ColorConstants.whiteMain,
                       items: List.generate(
                         Dummydb.dropdownData.length,
                         (index) => DropdownMenuItem(
@@ -264,7 +275,7 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                       ),
                       onChanged: (value) {
                         setState(() {
-                          widget.dropValue == value! as String?;
+                          dropValue1 = value! as String;
                         });
                       },
                     ),

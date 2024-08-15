@@ -11,14 +11,14 @@ class AppbarDropdownRowcard extends StatelessWidget {
       children: [
         Icon(
           Icons.list,
-          color: ColorConstants.whiteMain,
+          color: ColorConstants.greyMain,
         ),
         SizedBox(
           width: 20,
         ),
         Text(
           name,
-          style: TextStyle(color: ColorConstants.whiteMain),
+          style: TextStyle(color: ColorConstants.greyMain),
         ),
         SizedBox(
           width: 50,
@@ -26,7 +26,7 @@ class AppbarDropdownRowcard extends StatelessWidget {
         // Spacer(),
         Text(
           '1',
-          style: TextStyle(color: ColorConstants.whiteMain),
+          style: TextStyle(color: ColorConstants.greyMain),
         )
       ],
     );
