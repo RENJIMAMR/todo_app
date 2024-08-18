@@ -10,13 +10,15 @@ class ListRowCard extends StatelessWidget {
       this.onChanged,
       this.isChecked = false,
       this.time,
-      this.dropValue});
+      this.dropValue,
+      this.isRepeat = false,
+      this.dropTime});
   final String taskName;
 
-  final String? duedate, time, dropValue;
+  final String? duedate, time, dropValue, dropTime;
 
   final void Function(bool?)? onChanged;
-  final bool isChecked;
+  final bool isChecked, isRepeat;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -92,10 +94,14 @@ class ListRowCard extends StatelessWidget {
                     SizedBox(
                       width: 10,
                     ),
-                    Icon(
-                      Icons.repeat,
-                      color: ColorConstants.whiteMain,
-                    )
+                    isRepeat
+                        ? Icon(
+                            Icons.repeat,
+                            color: ColorConstants.whiteMain,
+                          )
+                        : SizedBox(
+                            width: 10,
+                          ),
                   ],
                 ),
               ),

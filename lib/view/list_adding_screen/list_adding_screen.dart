@@ -8,27 +8,31 @@ import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 
 class ListAddingScreen extends StatefulWidget {
-  const ListAddingScreen(
-      {super.key,
-      this.itemIndex = 0,
-      this.isEdit = false,
-      this.isCompleted = false,
-      this.taskname,
-      this.dueDate,
-      this.time,
-      this.dropValue,
-      this.isRepeat = false});
+  const ListAddingScreen({
+    super.key,
+    this.itemIndex = 0,
+    this.isEdit = false,
+    this.isCompleted = false,
+    this.taskname,
+    this.dueDate,
+    this.time,
+    this.dropValue,
+    this.isRepeat,
+    this.dropTime,
+  });
 
   final int itemIndex;
   final bool isEdit;
-  final bool isCompleted, isRepeat;
-  final String? taskname, dueDate, time, dropValue;
+  final bool isCompleted;
+  final bool? isRepeat;
+  final String? taskname, dueDate, time, dropValue, dropTime;
   @override
   State<ListAddingScreen> createState() => _ListAddingScreenState();
 }
 
 class _ListAddingScreenState extends State<ListAddingScreen> {
-  String? dropValue1, dropTime;
+  String? dropValue1, dropTime1;
+  bool isRepeat = false;
   TextEditingController nameController = TextEditingController();
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
@@ -38,11 +42,15 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
 
   @override
   void initState() {
-    listKeys = listBox.keys.toList();
-    nameController.text = widget.taskname ?? '';
-    dateController.text = widget.dueDate ?? '';
-    timeController.text = widget.time ?? '';
-    // dropValue1 = widget.dropValue ?? '';
+    if (widget.isEdit) {
+      listKeys = listBox.keys.toList();
+      nameController.text = widget.taskname ?? '';
+      dateController.text = widget.dueDate ?? '';
+      timeController.text = widget.time ?? '';
+      dropValue1 = widget.dropValue;
+      dropTime1 = widget.dropTime;
+    }
+
     setState(() {});
     print(listKeys);
     super.initState();
@@ -63,14 +71,18 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                     'dueDate': dateController.text,
                     'time': timeController.text,
                     'isCompleted': widget.isCompleted,
-                    'dropValue': dropValue1
+                    'dropValue': dropValue1,
+                    'isRepeat': isRepeat,
+                    'dropTime': dropTime1
                   })
                 : listBox.add({
                     'taskName': nameController.text,
                     'dueDate': dateController.text,
                     'time': timeController.text,
                     'isCompleted': false,
-                    'dropValue': dropValue1
+                    'dropValue': dropValue1,
+                    'isRepeat': isRepeat,
+                    'dropTime': dropTime1
                   });
 
             setState(() {});
@@ -182,10 +194,9 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                                     DateFormat('dd MMMM, y').format(selectDate);
 
                                 // Show time field after selecting the date
-                                setState(() {
-                                  timeController.text =
-                                      ''; // Clear the previous time
-                                });
+                                // timeController.text =
+                                //     ''; // Clear the previous time
+                                setState(() {});
                               }
                             },
                             child: Icon(
@@ -230,6 +241,8 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                                 );
                                 timeController.text = DateFormat('hh:mm a')
                                     .format(selectedDateTime);
+                                // dropTime = '';
+                                setState(() {});
                               }
                             },
                             child: Icon(
@@ -241,9 +254,68 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         ),
                       ),
                     SizedBox(
-                      height: 50,
+                      height: 30,
                     ),
 
+                    timeController.text.isNotEmpty
+                        ? Text(
+                            'Repeat',
+                            style: TextStyle(
+                                color: ColorConstants.blackMain,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold),
+                          )
+                        : SizedBox(),
+
+                    timeController.text.isNotEmpty
+                        ? DropdownButton(
+                            style: TextStyle(color: ColorConstants.blackMain),
+                            // focusColor: ColorConstants.blackMain,
+                            iconEnabledColor: ColorConstants.blackMain,
+                            hint: Text(
+                              'No Repeat',
+                              style: TextStyle(
+                                color: ColorConstants.blackMain,
+                                fontSize: 20,
+                              ),
+                            ),
+                            value: dropTime1,
+
+                            dropdownColor: ColorConstants.whiteMain,
+                            items: [
+                              DropdownMenuItem(
+                                  value: 'Once a Day',
+                                  child: Text(
+                                    'Once a Day',
+                                  )),
+                              DropdownMenuItem(
+                                  value: 'Once a week',
+                                  child: Text(
+                                    'Once a week',
+                                  )),
+                              DropdownMenuItem(
+                                  value: 'Once a month',
+                                  child: Text(
+                                    'Once a month',
+                                  )),
+                              DropdownMenuItem(
+                                  value: 'Once a year',
+                                  child: Text(
+                                    'Once a year',
+                                  ))
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                dropTime1 = value!;
+                                isRepeat = true;
+                              });
+                            },
+                          )
+                        : SizedBox(),
+
+                    SizedBox(
+                      height: 30,
+                    ),
                     Text(
                       'Add to List',
                       style: TextStyle(
@@ -258,9 +330,9 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                       hint: Text(
                         'Default',
                         style: TextStyle(
-                            color: ColorConstants.blackMain,
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold),
+                          color: ColorConstants.blackMain,
+                          fontSize: 20,
+                        ),
                       ),
                       value: dropValue1,
 

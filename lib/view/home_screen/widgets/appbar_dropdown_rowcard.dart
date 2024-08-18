@@ -24,10 +24,10 @@ class AppbarDropdownRowcard extends StatelessWidget {
           width: 50,
         ),
         // Spacer(),
-        Text(
-          '1',
-          style: TextStyle(color: ColorConstants.greyMain),
-        )
+        // Text(
+        //   '1',
+        //   style: TextStyle(color: ColorConstants.greyMain),
+        // )
       ],
     );
   }

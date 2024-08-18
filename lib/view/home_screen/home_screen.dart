@@ -6,11 +6,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/utils/app_sessions.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/utils/constants/image_constants.dart';
+import 'package:todo_app/view/default_list/default_list.dart';
 import 'package:todo_app/view/dummydb.dart';
+import 'package:todo_app/view/finished_list/finished_list.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
 import 'package:todo_app/view/home_screen/widgets/list_row_card.dart';
 import 'package:todo_app/view/list_adding_screen/list_adding_screen.dart';
 import 'package:todo_app/view/login_screen/login_screen.dart';
+import 'package:todo_app/view/personal_list/personal_list.dart';
+import 'package:todo_app/view/shopping_list/shopping_list.dart';
+import 'package:todo_app/view/wish_list/wish_list.dart';
+import 'package:todo_app/view/work_list/work_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -94,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 23,
                           fontWeight: FontWeight.bold),
                     ),
-                    value: dropValueH,
+                    value: dropValueH ?? Dummydb.dropdownData[0],
                     dropdownColor: ColorConstants.whiteMain,
                     items: List.generate(
                       Dummydb.dropdownData.length,
@@ -107,6 +113,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     onChanged: (value) {
                       setState(() {
                         dropValueH = value! as String?;
+                        if (dropValueH == Dummydb.dropdownData[0]) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DefaultList(),
+                              ));
+                        } else if (dropValueH == Dummydb.dropdownData[1]) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PersonalList(),
+                              ));
+                        } else if (dropValueH == Dummydb.dropdownData[2]) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShoppingList(),
+                              ));
+                        } else if (dropValueH == Dummydb.dropdownData[3]) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WishList(),
+                              ));
+                        } else if (dropValueH == Dummydb.dropdownData[4]) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WorkList(),
+                              ));
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FinishedList(),
+                              ));
+                        }
                       });
                     },
                   ),
@@ -165,11 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return ListAddingScreen(
+                                isRepeat: currentList['isRepeat'] ?? false,
                                 taskname: currentList['taskName'],
                                 dueDate: currentList['dueDate'],
                                 time: currentList['time'],
                                 dropValue: currentList['dropValue'],
                                 isEdit: true,
+                                dropTime: currentList['dropTime'],
                                 isCompleted: currentList["isCompleted"],
                                 itemIndex: index);
                           }));
@@ -181,7 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           duedate: currentList['dueDate'],
                           time: currentList['time'],
                           dropValue: currentList['dropValue'],
+                          dropTime: currentList['dropTime'],
                           isChecked: currentList["isCompleted"],
+                          isRepeat: currentList['isRepeat'] ?? false,
                           // height: currentList["isCompleted"] ? 0 : 80,
                           onChanged: (value) {
                             listBox.put(listKeys[index], {
@@ -189,6 +236,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               'dueDate': currentList['dueDate'],
                               'time': currentList['time'],
                               'dropValue': currentList['dropValue'],
+                              'dropTime': currentList['dropTime'],
+                              'isRepeat': currentList['isRepeat'],
                               'isCompleted':
                                   value, // to update the state of checked box
                             });
