@@ -6,6 +6,7 @@ import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/view/dummydb.dart';
 import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/home_screen/widgets/appbar_dropdown_rowcard.dart';
+import 'package:todo_app/view/list_adding_screen/widgets/dropdown_row_card.dart';
 
 class ListAddingScreen extends StatefulWidget {
   const ListAddingScreen({
@@ -341,7 +342,7 @@ class _ListAddingScreenState extends State<ListAddingScreen> {
                         Dummydb.dropdownData.length,
                         (index) => DropdownMenuItem(
                             value: Dummydb.dropdownData[index],
-                            child: AppbarDropdownRowcard(
+                            child: DropdownRowcard(
                               name: Dummydb.dropdownData[index],
                             )),
                       ),

@@ -8,6 +8,8 @@ import 'package:todo_app/view/welcome_page/welcome_page.dart';
 Future<void> main(List<String> args) async {
   await Hive.initFlutter();
   var box = await Hive.openBox(AppSessions.ListBox);
+  var box2 = await Hive.openBox(AppSessions.FinishedBox);
+
   runApp(MyApp());
 }
 
