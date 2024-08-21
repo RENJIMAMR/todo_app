@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List listKeys = [];
   List filteredListKeys = []; // New list for filtered keys
-  List finishedListKeys = []; //New hive list for finished tasks
+  
   @override
   void initState() {
     super.initState();
@@ -304,11 +304,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void filterList() {
     if (dropValueH == null || dropValueH == Dummydb.app_dropdownData[0]) {
-      filteredListKeys = listKeys; // Show all lists
+      filteredListKeys = listKeys.where((key) {
+        var currentList = listBox.get(key);
+        return currentList['isCompleted'] == false;
+      }).toList();
+    } else if (dropValueH == "Finished") {
+      filteredListKeys = listKeys.where((key) {
+        var currentList = listBox.get(key);
+        return currentList['isCompleted'] == true;
+      }).toList();
     } else {
       filteredListKeys = listKeys.where((key) {
         var currentList = listBox.get(key);
-        return currentList['dropValue'] == dropValueH;
+        return currentList['dropValue'] == dropValueH &&
+            currentList['isCompleted'] == false;
       }).toList();
     }
     setState(() {});
@@ -492,14 +501,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             //   'isCompleted': value,
                             // });
                             // finishedListKeys = finishedBox.keys.toList();
-                            if (value == true) {
-                              Future.delayed(Duration(seconds: 2))
-                                  .then((value) {
-                                listBox.delete(filteredListKeys[index]);
-                                listKeys = listBox.keys.toList();
-                                filterList();
-                              });
-                            }
+                            // if (value == true) {
+                            Future.delayed(Duration(seconds: 2)).then((value) {
+                              // listBox.delete(filteredListKeys[index]);
+                              listKeys = listBox.keys.toList();
+                              filterList();
+                            });
+                            // }
                             setState(() {});
                           },
                         ));

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/utils/constants/color_constants.dart';
 import 'package:todo_app/utils/constants/image_constants.dart';
-import 'package:todo_app/view/home_screen/home_screen.dart';
 import 'package:todo_app/view/login_screen/login_screen.dart';
 
 class WelcomePage extends StatefulWidget {
