@@ -50,36 +50,7 @@ class FinishedList extends StatelessWidget {
                   SizedBox(
                     width: 30,
                   ),
-                  // PopupMenuButton(
-                  //   shadowColor: ColorConstants.violetlight,
-                  //   iconColor: ColorConstants.whiteMain,
-                  //   iconSize: 30,
-                  //   color: ColorConstants.whiteMain,
-                  //   itemBuilder: (context) => [
-                  //     PopupMenuItem(
-                  //         onTap: () async {
-                  //           await listBox.clear();
-                  //           listKeys = listBox.keys.toList();
-                  //           setState(() {});
-                  //         },
-                  //         child: Text('Clear')),
-                  //     PopupMenuItem(child: Text('Settings')),
-                  //     PopupMenuItem(child: Text('Print')),
-                  //     PopupMenuItem(
-                  //         onTap: () async {
-                  //           final SharedPreferences prefs =
-                  //               await SharedPreferences.getInstance();
-                  //           await prefs.clear();
-                  //           Navigator.pushReplacement(
-                  //               context,
-                  //               MaterialPageRoute(
-                  //                 builder: (context) => LoginScreen(),
-                  //               ));
-                  //           setState(() {});
-                  //         },
-                  //         child: Text('Logout'))
-                  //   ],
-                  // )
+                
                 ],
               ),
             ),

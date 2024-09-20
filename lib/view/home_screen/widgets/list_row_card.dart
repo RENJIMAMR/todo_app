@@ -24,8 +24,7 @@ class ListRowCard extends StatelessWidget {
     return Column(
       children: [
         Container(
-          // duration: Duration(seconds: 2),
-          // height: 80,
+         
           decoration: BoxDecoration(
               color: ColorConstants.blueGrey.withOpacity(.5),
               borderRadius: BorderRadius.circular(20)),
